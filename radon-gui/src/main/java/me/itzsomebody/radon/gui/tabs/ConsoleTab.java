@@ -32,7 +32,7 @@ public class ConsoleTab extends JPanel {
     /**
      * The {@link JTextArea} System.out and System.err is redirected to.
      */
-    private JTextArea consoleTextArea;
+    private final JTextArea consoleTextArea;
 
     public ConsoleTab() {
         GridBagLayout gbl_this = new GridBagLayout();

@@ -42,21 +42,23 @@ public class LocalVariables extends Transformer {
     public void transform() {
         AtomicInteger counter = new AtomicInteger();
 
-        getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper ->
-                classWrapper.classNode.methods.parallelStream().filter(methodNode ->
-                        methodNode.localVariables != null).forEach(methodNode -> {
-                    counter.addAndGet(methodNode.localVariables.size());
+        getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper))
+                .forEach(classWrapper -> classWrapper.classNode.methods.parallelStream()
+                        .filter(methodNode -> methodNode.localVariables != null)
+                        .forEach(methodNode -> {
+                            counter.addAndGet(methodNode.localVariables.size());
 
-                    if (remove) {
-                        methodNode.localVariables = null;
-                    } else {
-                        methodNode.localVariables.forEach(localVariableNode -> {
-                            localVariableNode.name = randomString(4);
-                            localVariableNode.desc = "L" + localVariableNode.name + ";";
-                        });
-                    }
-                })
-        );
+                            if (remove) {
+                                methodNode.localVariables = null;
+                            } else {
+                                methodNode.localVariables.forEach(localVariableNode -> {
+                                    localVariableNode.name = randomString(4);
+                                    localVariableNode.desc = "L" + localVariableNode.name + ";";
+                                });
+                            }
+                        })
+                );
 
         LoggerUtils.stdOut(String.format("%s %d local variables.", (remove) ? "Removed" : "Obfuscated", counter.get()));
     }

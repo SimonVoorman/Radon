@@ -31,13 +31,18 @@ public class MemberShuffler extends Transformer {
     public void transform() {
         AtomicInteger counter = new AtomicInteger();
 
-        getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper -> {
-            Collections.shuffle(classWrapper.classNode.methods);
-            counter.addAndGet(classWrapper.classNode.methods.size());
-            if (classWrapper.classNode.fields != null) {
-                Collections.shuffle(classWrapper.classNode.fields);
-                counter.addAndGet(classWrapper.classNode.fields.size());
-            }
+        getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper))
+                .forEach(classWrapper -> {
+                    Collections.shuffle(classWrapper.classNode.methods);
+
+                    counter.addAndGet(classWrapper.classNode.methods.size());
+
+                    if (classWrapper.classNode.fields != null) {
+                        Collections.shuffle(classWrapper.classNode.fields);
+
+                        counter.addAndGet(classWrapper.classNode.fields.size());
+                    }
         });
 
         LoggerUtils.stdOut(String.format("Shuffled %d members.", counter.get()));

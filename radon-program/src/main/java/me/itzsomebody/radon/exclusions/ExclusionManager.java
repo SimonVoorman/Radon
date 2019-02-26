@@ -17,6 +17,7 @@
 
 package me.itzsomebody.radon.exclusions;
 
+import java.util.Deque;
 import java.util.LinkedList;
 
 /**
@@ -25,9 +26,9 @@ import java.util.LinkedList;
  * @author ItzSomebody
  */
 public class ExclusionManager {
-    private LinkedList<Exclusion> exclusions = new LinkedList<>();
+    private final Deque<Exclusion> exclusions = new LinkedList<>();
 
-    public LinkedList<Exclusion> getExclusions() {
+    public Deque<Exclusion> getExclusions() {
         return this.exclusions;
     }
 

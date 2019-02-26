@@ -18,6 +18,8 @@
 package me.itzsomebody.radon.transformers.optimizers;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 import me.itzsomebody.radon.utils.LoggerUtils;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -34,16 +36,16 @@ public class NopRemover extends Optimizer {
         AtomicInteger count = new AtomicInteger();
         long current = System.currentTimeMillis();
 
-        getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper ->
-            classWrapper.methods.parallelStream().filter(methodWrapper -> !excluded(methodWrapper)
+        getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper ->
+            classWrapper.methods.parallelStream()
+                    .filter(methodWrapper -> !excluded(methodWrapper)
                     && hasInstructions(methodWrapper.methodNode)).forEach(methodWrapper -> {
                 MethodNode methodNode = methodWrapper.methodNode;
 
-                for (AbstractInsnNode insn : methodNode.instructions.toArray()) {
-                    if (insn.getOpcode() == NOP) {
-                        methodNode.instructions.remove(insn);
-                    }
-                }
+                Stream.of(methodNode.instructions.toArray())
+                        .filter(insn -> insn.getOpcode() == NOP)
+                        .forEach(methodNode.instructions::remove);
             })
         );
 

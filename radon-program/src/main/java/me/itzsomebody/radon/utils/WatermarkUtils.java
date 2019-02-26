@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.objectweb.asm.ClassReader;
@@ -117,6 +118,7 @@ public class WatermarkUtils {
     private static String decrypt(String enc, String key) {
         char[] messageChars = enc.toCharArray();
         char[] keyChars = key.toCharArray();
+
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < messageChars.length; i++) {

@@ -40,11 +40,15 @@ public class IOUtils {
 
         while (true) {
             i++;
-            String newName = existing.getAbsolutePath() + ".BACKUP-" + String.valueOf(i);
+
+            String newName = String.format("%s.BACKUP-%s", existing.getAbsolutePath(), String.valueOf(i));
             File backUpName = new File(newName);
+
             if (!backUpName.exists()) {
+
                 existing.renameTo(backUpName);
                 existing.delete();
+
                 return newName;
             }
         }
@@ -61,13 +65,13 @@ public class IOUtils {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
-            while (in.available() > 0) {
-                int data = in.read(buffer);
-                out.write(buffer, 0, data);
-            }
+
+            while (in.available() > 0)
+                out.write(buffer, 0, in.read(buffer));
 
             in.close();
             out.close();
+            
             return out.toByteArray();
         } catch (IOException ioe) {
             ioe.printStackTrace();

@@ -98,13 +98,12 @@ public class StringEncryptionExclusionGUI extends JFrame {
             if (removeList.isEmpty())
                 return;
 
-            for (String s : removeList) {
-                exclusionList.removeElement(s);
-            }
+            removeList.forEach(exclusionList::removeElement);
         });
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+
                 for (int i = 0; i < exclusionList.size(); i++) {
                     if (!ObfuscationTab.stringExclusions.contains(exclusionList.get(i))) {
                         ObfuscationTab.stringExclusions.add(exclusionList.get(i));

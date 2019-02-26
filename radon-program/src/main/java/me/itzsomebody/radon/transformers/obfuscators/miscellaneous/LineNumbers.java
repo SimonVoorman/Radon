@@ -45,20 +45,24 @@ public class LineNumbers extends Transformer {
     public void transform() {
         AtomicInteger counter = new AtomicInteger();
 
-        this.getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper ->
-                classWrapper.classNode.methods.parallelStream().filter(this::hasInstructions).forEach(methodNode -> {
-                    for (AbstractInsnNode insn : methodNode.instructions.toArray()) {
-                        if (insn instanceof LineNumberNode) {
-                            if (remove) {
-                                methodNode.instructions.remove(insn);
-                            } else {
-                                ((LineNumberNode) insn).line = RandomUtils.getRandomInt();
-                            }
+        this.getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper))
+                .forEach(classWrapper ->
+                classWrapper.classNode.methods.parallelStream()
+                        .filter(this::hasInstructions)
+                        .forEach(methodNode -> {
+                            for (AbstractInsnNode insn : methodNode.instructions.toArray()) {
+                                if (insn instanceof LineNumberNode) {
+                                    if (remove) {
+                                        methodNode.instructions.remove(insn);
+                                    } else {
+                                        ((LineNumberNode) insn).line = RandomUtils.getRandomInt();
+                                    }
 
-                            counter.incrementAndGet();
-                        }
-                    }
-                })
+                                    counter.incrementAndGet();
+                                }
+                            }
+                        })
         );
 
         LoggerUtils.stdOut(String.format("%s %d line numbers.", (remove) ? "Removed" : "Obfuscated", counter.get()));

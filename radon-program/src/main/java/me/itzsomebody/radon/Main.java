@@ -96,6 +96,7 @@ public class Main {
 
             try {
                 List<String> ids = WatermarkUtils.extractIds(new ZipFile(leaked), switchArgs[1]);
+
                 ids.forEach(LoggerUtils::stdOut);
             } catch (Throwable t) {
                 t.printStackTrace();

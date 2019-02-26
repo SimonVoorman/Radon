@@ -55,11 +55,11 @@ import org.objectweb.asm.tree.MethodNode;
  * @author ItzSomebody
  */
 public class Radon {
-    public SessionInfo sessionInfo;
-    private Map<String, ClassTree> hierarchy = new HashMap<>();
-    public Map<String, ClassWrapper> classes = new HashMap<>();
-    public Map<String, ClassWrapper> classPath = new HashMap<>();
-    public Map<String, byte[]> resources = new HashMap<>();
+    public final SessionInfo sessionInfo;
+    private final Map<String, ClassTree> hierarchy = new HashMap<>();
+    public final Map<String, ClassWrapper> classes = new HashMap<>();
+    public final Map<String, ClassWrapper> classPath = new HashMap<>();
+    public final Map<String, byte[]> resources = new HashMap<>();
 
     public Radon(SessionInfo sessionInfo) {
         this.sessionInfo = sessionInfo;
@@ -75,17 +75,22 @@ public class Radon {
 
         if (this.sessionInfo.getTrashClasses() > 0)
             this.sessionInfo.getTransformers().add(new TrashClasses());
+
         if (this.sessionInfo.getTransformers().isEmpty())
             throw new NoTransformersException();
+
         LoggerUtils.stdOut("------------------------------------------------");
-        this.sessionInfo.getTransformers().stream().filter(Objects::nonNull).forEach(transformer -> {
-            long current = System.currentTimeMillis();
-            LoggerUtils.stdOut(String.format("Running %s transformer.", transformer.getName()));
-            transformer.init(this);
-            transformer.transform();
-            LoggerUtils.stdOut(String.format("Finished running %s transformer. [%dms]", transformer.getName(), (System.currentTimeMillis() - current)));
-            LoggerUtils.stdOut("------------------------------------------------");
-        });
+
+        this.sessionInfo.getTransformers().stream()
+                .filter(Objects::nonNull)
+                .forEach(transformer -> {
+                    long current = System.currentTimeMillis();
+                    LoggerUtils.stdOut(String.format("Running %s transformer.", transformer.getName()));
+                    transformer.init(this);
+                    transformer.transform();
+                    LoggerUtils.stdOut(String.format("Finished running %s transformer. [%dms]", transformer.getName(), (System.currentTimeMillis() - current)));
+                    LoggerUtils.stdOut("------------------------------------------------");
+                });
 
         writeOutput();
     }
@@ -245,13 +250,18 @@ public class Radon {
     private void buildHierarchy(ClassWrapper classWrapper, ClassWrapper sub) {
         if (hierarchy.get(classWrapper.classNode.name) == null) {
             ClassTree tree = new ClassTree(classWrapper);
+
             if (classWrapper.classNode.superName != null) {
                 tree.parentClasses.add(classWrapper.classNode.superName);
+
                 ClassWrapper superClass = classPath.get(classWrapper.classNode.superName);
+
                 if (superClass == null)
                     throw new MissingClassException(classWrapper.classNode.superName + " is missing in the classpath.");
+
                 buildHierarchy(superClass, classWrapper);
             }
+
             if (classWrapper.classNode.interfaces != null && !classWrapper.classNode.interfaces.isEmpty()) {
                 for (String s : classWrapper.classNode.interfaces) {
                     tree.parentClasses.add(s);
@@ -261,8 +271,10 @@ public class Radon {
                     buildHierarchy(interfaceClass, classWrapper);
                 }
             }
+
             hierarchy.put(classWrapper.classNode.name, tree);
         }
+
         if (sub != null) {
             hierarchy.get(classWrapper.classNode.name).subClasses.add(sub.classNode.name);
         }
@@ -285,6 +297,7 @@ public class Radon {
 
             String first = deriveCommonSuperName(type1, type2);
             String second = deriveCommonSuperName(type2, type1);
+
             if (!"java/lang/Object".equals(first)) {
                 return first;
             }
@@ -298,6 +311,7 @@ public class Radon {
         private String deriveCommonSuperName(String type1, String type2) {
             ClassNode first = returnClazz(type1);
             ClassNode second = returnClazz(type2);
+
             if (isAssignableFrom(type1, type2)) {
                 return type1;
             } else if (isAssignableFrom(type2, type1)) {
@@ -315,34 +329,43 @@ public class Radon {
 
         private ClassNode returnClazz(String ref) {
             ClassWrapper clazz = classPath.get(ref);
-            if (clazz == null) {
+
+            if (clazz == null)
                 throw new MissingClassException(ref + " does not exist in classpath!");
-            }
+
             return clazz.classNode;
         }
 
         private boolean isAssignableFrom(String type1, String type2) {
             if ("java/lang/Object".equals(type1))
                 return true;
-            if (type1.equals(type2)) {
+
+            if (type1.equals(type2))
                 return true;
-            }
+
             returnClazz(type1);
             returnClazz(type2);
+
             ClassTree firstTree = getTree(type1);
-            if (firstTree == null) {
+
+            if (firstTree == null)
                 throw new MissingClassException("Could not find " + type1 + " in the built class hierarchy");
-            }
+
             Set<String> allChildren = new HashSet<>();
+
             LinkedList<String> toProcess = new LinkedList<>(firstTree.subClasses);
+
             while (!toProcess.isEmpty()) {
                 String s = toProcess.poll();
+
                 if (allChildren.add(s)) {
                     returnClazz(s);
                     ClassTree tempTree = getTree(s);
+
                     toProcess.addAll(tempTree.subClasses);
                 }
             }
+
             return allChildren.contains(type2);
         }
     }

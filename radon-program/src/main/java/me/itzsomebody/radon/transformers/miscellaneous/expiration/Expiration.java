@@ -38,7 +38,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * @author ItzSomebody
  */
 public class Expiration extends Transformer {
-    private ExpirationSetup setup;
+    private final ExpirationSetup setup;
 
     public Expiration(ExpirationSetup setup) {
         this.setup = setup;

@@ -45,18 +45,21 @@ public class HeavyFlowObfuscation extends NormalFlowObfuscation {
     public void transform() {
         AtomicInteger counter = new AtomicInteger();
 
-        this.getClassWrappers().parallelStream().filter(classWrapper ->
+        this.getClassWrappers().parallelStream()
+                .filter(classWrapper ->
                 !excluded(classWrapper)).forEach(classWrapper -> {
             ClassNode classNode = classWrapper.classNode;
             FieldNode field = new FieldNode(ACC_PUBLIC + ACC_STATIC + ACC_FINAL,
                     StringUtils.randomSpacesString(RandomUtils.getRandomInt(10)), "Z", null, null);
 
             classNode.fields.add(field);
-            classWrapper.methods.parallelStream().filter(methodWrapper -> !excluded(methodWrapper)
-                    && hasInstructions(methodWrapper.methodNode)).forEach(methodWrapper -> {
+            classWrapper.methods.parallelStream()
+                    .filter(methodWrapper -> !excluded(methodWrapper)
+                            && hasInstructions(methodWrapper.methodNode)).forEach(methodWrapper -> {
                 MethodNode methodNode = methodWrapper.methodNode;
                 int leeway = getSizeLeeway(methodNode);
                 int varIndex = methodNode.maxLocals;
+
                 methodNode.maxLocals++;
                 AbstractInsnNode[] untouchedList = methodNode.instructions.toArray();
                 LabelNode labelNode = exitLabel(methodNode);
@@ -81,6 +84,7 @@ public class HeavyFlowObfuscation extends NormalFlowObfuscation {
                             counter.incrementAndGet();
                         }
                     }
+
                     if (insn.getOpcode() == GOTO) {
                         methodNode.instructions.insertBefore(insn, new VarInsnNode(ILOAD, varIndex));
                         methodNode.instructions.insert(insn, new InsnNode(ATHROW));

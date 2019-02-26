@@ -21,11 +21,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
+
 import me.itzsomebody.radon.Dictionaries;
 import me.itzsomebody.radon.SessionInfo;
 import me.itzsomebody.radon.exceptions.IllegalConfigurationKeyException;
@@ -66,12 +64,13 @@ import org.yaml.snakeyaml.Yaml;
  * @author ItzSomebody
  */
 public class ConfigurationParser {
-    private Map<String, Object> map;
+    private final Map<String, Object> map;
     private final static Set<String> VALID_KEYS = new HashSet<String>();
 
     static {
-        for (ConfigurationSettings setting : ConfigurationSettings.values())
-            VALID_KEYS.add(setting.getValue());
+        Stream.of(ConfigurationSettings.values())
+                .map(ConfigurationSettings::getValue)
+                .forEach(VALID_KEYS::add);
     }
 
     public ConfigurationParser(InputStream in) {
@@ -150,20 +149,16 @@ public class ConfigurationParser {
         if (file.isFile()) {
             System.out.println("should be a directory");
         } else {
-            File[] fileLists = file.listFiles();
-
-            for (int i = 0; i < fileLists.length; i++) {
-                // 输出元素名称
-
-                if (fileLists[i].isDirectory()) {
-                    addSubDirFiles(fileLists[i], libraries);
+            Stream.of(Objects.requireNonNull(file.listFiles())).forEach(fileList -> {
+                if (fileList.isDirectory()) {
+                    addSubDirFiles(fileList, libraries);
                 } else {
-                    if (fileLists[i].getName().toLowerCase().endsWith(".jar")) {
+                    if (fileList.getName().toLowerCase().endsWith(".jar")) {
                         //System.out.println(fileLists[i].getName());
-                        libraries.add(fileLists[i]);
+                        libraries.add(fileList);
                     }
                 }
-            }
+            });
         }
     }
 
@@ -542,9 +537,7 @@ public class ConfigurationParser {
             throw new IllegalConfigurationValueException(ConfigurationSettings.DICTIONARY.getValue(), String.class,
                     o.getClass());
 
-        if (o instanceof String)
-            return Dictionaries.stringToDictionary((String) o);
-        else
-            return Dictionaries.intToDictionary((int) o);
+        return o instanceof String ? Dictionaries.stringToDictionary((String) o) :
+                Dictionaries.intToDictionary((int) o);
     }
 }

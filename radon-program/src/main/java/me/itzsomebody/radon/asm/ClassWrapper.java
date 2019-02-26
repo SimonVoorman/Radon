@@ -44,12 +44,12 @@ public class ClassWrapper {
     /**
      * Methods.
      */
-    public ArrayList<MethodWrapper> methods = new ArrayList<>();
+    public final ArrayList<MethodWrapper> methods = new ArrayList<>();
 
     /**
      * Fields.
      */
-    public ArrayList<FieldWrapper> fields = new ArrayList<>();
+    public final ArrayList<FieldWrapper> fields = new ArrayList<>();
 
     /**
      * Creates a ClassWrapper object.

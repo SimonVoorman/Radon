@@ -20,6 +20,8 @@ package me.itzsomebody.radon.transformers;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import me.itzsomebody.radon.Radon;
 import me.itzsomebody.radon.asm.ClassWrapper;
 import me.itzsomebody.radon.asm.FieldWrapper;
@@ -42,7 +44,7 @@ public abstract class Transformer implements Opcodes {
     /**
      * Strings which have already been generated and used.
      */
-    private HashSet<String> usedStrings = new HashSet<>();
+    private final Set<String> usedStrings = new HashSet<>();
 
     public void init(Radon radon) {
         this.radon = radon;

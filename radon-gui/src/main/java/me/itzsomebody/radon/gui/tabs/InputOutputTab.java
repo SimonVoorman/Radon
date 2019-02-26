@@ -31,9 +31,9 @@ import me.itzsomebody.radon.SessionInfo;
  * @author ItzSomebody
  */
 public class InputOutputTab extends JPanel {
-    private JTextField inputField;
-    private JTextField outputField;
-    private DefaultListModel<String> libraryList;
+    private final JTextField inputField;
+    private final JTextField outputField;
+    private final DefaultListModel<String> libraryList;
     private File lastPath;
 
     public InputOutputTab() {

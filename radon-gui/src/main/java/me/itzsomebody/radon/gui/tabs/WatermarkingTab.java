@@ -36,9 +36,9 @@ import me.itzsomebody.radon.utils.WatermarkUtils;
  * @author ItzSomebody
  */
 public class WatermarkingTab extends JPanel {
-    private JTextField watermarkMessageField;
-    private JTextField watermarkKeyField;
-    private JCheckBox watermarkerEnabledCheckBox;
+    private final JTextField watermarkMessageField;
+    private final JTextField watermarkKeyField;
+    private final JCheckBox watermarkerEnabledCheckBox;
 
     public WatermarkingTab() {
         GridBagLayout gbl_this = new GridBagLayout();
@@ -197,9 +197,7 @@ public class WatermarkingTab extends JPanel {
                 ZipFile zipFile = new ZipFile(file);
                 List<String> ids = WatermarkUtils.extractIds(zipFile, watermarkExtractorKeyField.getText());
 
-                for (String id : ids) {
-                    extractionList.addElement(id);
-                }
+                ids.forEach(extractionList::addElement);
             } catch (ZipException ze) {
                 ze.printStackTrace();
                 throw new WatermarkExtractionException("Could not load input file as a zip.");

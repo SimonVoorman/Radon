@@ -46,7 +46,7 @@ public enum ConfigurationSettings {
     DICTIONARY("Dictionary"),
     TRASH_CLASSES("TrashClasses");
 
-    private String value;
+    private final String value;
 
     ConfigurationSettings(String value) {
         this.value = value;

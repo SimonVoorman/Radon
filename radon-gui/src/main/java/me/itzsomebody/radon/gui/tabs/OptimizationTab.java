@@ -96,6 +96,7 @@ public class OptimizationTab extends JPanel {
             gotoReturnCheckBox.setEnabled(enable);
             nopCheckBox.setEnabled(enable);
         });
+
         this.add(optimizationEnabledCheckBox, gbc_optimizationEnabledCheckBox);
     }
 
@@ -125,7 +126,7 @@ public class OptimizationTab extends JPanel {
         gotoGotoCheckBox.setEnabled(false);
 
         if (info.getTransformers() != null) {
-            info.getTransformers().stream().filter(transformer -> transformer instanceof OptimizerDelegator)
+            info.getTransformers().stream().filter(OptimizerDelegator.class::isInstance)
                     .forEach(transformer -> {
                         optimizationEnabledCheckBox.setSelected(true);
                         nopCheckBox.setEnabled(true);
@@ -133,6 +134,7 @@ public class OptimizationTab extends JPanel {
                         gotoGotoCheckBox.setEnabled(true);
 
                         OptimizerSetup setup = ((OptimizerDelegator) transformer).getSetup();
+
                         nopCheckBox.setSelected(setup.isNopRemoverEnabled());
                         gotoReturnCheckBox.setSelected(setup.isGotoReturnEnabled());
                         gotoGotoCheckBox.setSelected(setup.isGotoGotoEnabled());

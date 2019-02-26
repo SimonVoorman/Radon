@@ -43,9 +43,11 @@ public class SourceDebug extends Transformer {
         AtomicInteger counter = new AtomicInteger();
 
         String newName = (remove) ? null : randomString(4) + ".java";
-        getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper -> {
-            classWrapper.classNode.sourceDebug = newName;
-            counter.incrementAndGet();
+        getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper))
+                .forEach(classWrapper -> {
+                    classWrapper.classNode.sourceDebug = newName;
+                    counter.incrementAndGet();
         });
 
         LoggerUtils.stdOut(String.format("%s %d source debug attributes.", (remove) ? "Removed" : "Obfuscated",

@@ -41,9 +41,10 @@ public class BytecodeUtils {
 
     public static AbstractInsnNode getNext(AbstractInsnNode node) {
         AbstractInsnNode next = node.getNext();
-        while (!isInstruction(next)) {
+
+        while (!isInstruction(next))
             next = next.getNext();
-        }
+
         return next;
     }
 
@@ -67,10 +68,11 @@ public class BytecodeUtils {
     }
 
     public static boolean isIntInsn(AbstractInsnNode insn) {
-        if (insn == null) {
+        if (insn == null)
             return false;
-        }
+
         int opcode = insn.getOpcode();
+
         return ((opcode >= Opcodes.ICONST_M1 && opcode <= Opcodes.ICONST_5)
                 || opcode == Opcodes.BIPUSH
                 || opcode == Opcodes.SIPUSH
@@ -80,6 +82,7 @@ public class BytecodeUtils {
 
     public static boolean isLongInsn(AbstractInsnNode insn) {
         int opcode = insn.getOpcode();
+
         return (opcode == Opcodes.LCONST_0
                 || opcode == Opcodes.LCONST_1
                 || (insn instanceof LdcInsnNode
@@ -88,12 +91,14 @@ public class BytecodeUtils {
 
     public static boolean isFloatInsn(AbstractInsnNode insn) {
         int opcode = insn.getOpcode();
+
         return (opcode >= Opcodes.FCONST_0 && opcode <= Opcodes.FCONST_2)
                 || (insn instanceof LdcInsnNode && ((LdcInsnNode) insn).cst instanceof Float);
     }
 
     public static boolean isDoubleInsn(AbstractInsnNode insn) {
         int opcode = insn.getOpcode();
+
         return (opcode >= Opcodes.DCONST_0 && opcode <= Opcodes.DCONST_1)
                 || (insn instanceof LdcInsnNode && ((LdcInsnNode) insn).cst instanceof Double);
     }

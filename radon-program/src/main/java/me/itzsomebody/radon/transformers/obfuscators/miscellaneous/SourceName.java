@@ -43,9 +43,11 @@ public class SourceName extends Transformer {
         AtomicInteger counter = new AtomicInteger();
 
         String newName = (remove) ? null : randomString(4) + ".java";
-        getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper -> {
-            classWrapper.classNode.sourceFile = newName;
-            counter.incrementAndGet();
+        getClassWrappers().parallelStream()
+                .filter(classWrapper -> !excluded(classWrapper))
+                .forEach(classWrapper -> {
+                    classWrapper.classNode.sourceFile = newName;
+                    counter.incrementAndGet();
         });
 
         LoggerUtils.stdOut(String.format("%s %d source name attributes.", (remove) ? "Removed" : "Obfuscated",

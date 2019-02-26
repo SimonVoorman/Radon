@@ -20,6 +20,7 @@ package me.itzsomebody.radon.utils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,9 +36,9 @@ public class LoggerUtils {
     /**
      * The {@link SimpleDateFormat} that will be used for logging.
      */
-    private static SimpleDateFormat FORMAT = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
 
-    private static List<String> strings = new ArrayList<>();
+    private static final List<String> strings = new ArrayList<>();
 
     /**
      * Writes strings to log.
@@ -66,10 +67,14 @@ public class LoggerUtils {
                 bw.append("\n");
                 bw.append("Version: ").append(Main.VERSION).append('\n');
                 bw.append("Contributors: ").append(Main.CONTRIBUTORS).append('\n');
-                for (String msg : strings) {
-                    bw.append(msg);
-                    bw.newLine();
-                }
+                strings.forEach(msg -> {
+                    try {
+                        bw.append(msg);
+                        bw.newLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
                 strings.clear();
                 bw.close();
             } catch (Throwable t) {

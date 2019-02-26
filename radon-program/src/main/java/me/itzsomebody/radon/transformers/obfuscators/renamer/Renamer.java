@@ -63,7 +63,8 @@ public class Renamer extends Transformer {
         long current = System.currentTimeMillis();
         AtomicInteger classCounter = new AtomicInteger();
         this.getClassWrappers().forEach(classWrapper -> {
-            classWrapper.methods.stream().filter(methodWrapper -> !AccessUtils.isNative(methodWrapper.methodNode.access)
+            classWrapper.methods.stream()
+                    .filter(methodWrapper -> !AccessUtils.isNative(methodWrapper.methodNode.access)
                     && !"main".equals(methodWrapper.methodNode.name) && !"premain".equals(methodWrapper.methodNode.name)
                     && !methodWrapper.methodNode.name.startsWith("<")).forEach(methodWrapper -> {
                 if (canRenameMethodTree(new HashSet<>(), methodWrapper, classWrapper.originalName)) {
@@ -201,12 +202,9 @@ public class Renamer extends Transformer {
         if (!tree.classWrapper.libraryNode && !visited.contains(tree)) {
             mappings.put(className + '.' + MethodWrapper.originalName + MethodWrapper.originalDescription, newName);
             visited.add(tree);
-            for (String parentClass : tree.parentClasses) {
-                this.renameMethodTree(visited, MethodWrapper, parentClass, newName);
-            }
-            for (String subClass : tree.subClasses) {
-                this.renameMethodTree(visited, MethodWrapper, subClass, newName);
-            }
+            tree.parentClasses.forEach(parent -> renameMethodTree(visited, MethodWrapper, parent, newName));
+
+            tree.subClasses.forEach(sub -> renameMethodTree(visited, MethodWrapper, sub, newName));
         }
     }
 
@@ -245,12 +243,10 @@ public class Renamer extends Transformer {
         if (!tree.classWrapper.libraryNode && !visited.contains(tree)) {
             mappings.put(owner + '.' + fieldWrapper.originalName + '.' + fieldWrapper.originalDescription, newName);
             visited.add(tree);
-            for (String parentClass : tree.parentClasses) {
-                this.renameFieldTree(visited, fieldWrapper, parentClass, newName);
-            }
-            for (String subClass : tree.subClasses) {
-                this.renameFieldTree(visited, fieldWrapper, subClass, newName);
-            }
+
+            tree.parentClasses.forEach(parent -> renameFieldTree(visited, fieldWrapper, parent, newName));
+
+            tree.subClasses.forEach(sub -> renameFieldTree(visited, fieldWrapper, sub, newName));
         }
     }
 

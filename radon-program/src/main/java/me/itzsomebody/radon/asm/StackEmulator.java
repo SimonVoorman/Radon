@@ -52,7 +52,7 @@ public class StackEmulator implements Opcodes {
     /**
      * {@link HashSet} of {@link AbstractInsnNode}s where the stack is empty
      */
-    private Set<AbstractInsnNode> emptyAt;
+    private final Set<AbstractInsnNode> emptyAt = new HashSet<>();
 
     /**
      * Constructor to create a {@link StackEmulator} object.
@@ -63,7 +63,7 @@ public class StackEmulator implements Opcodes {
     public StackEmulator(MethodNode methodNode, AbstractInsnNode breakPoint) {
         this.methodNode = methodNode;
         this.breakPoint = breakPoint;
-        this.emptyAt = new HashSet<>();
+
         execute(false);
     }
 

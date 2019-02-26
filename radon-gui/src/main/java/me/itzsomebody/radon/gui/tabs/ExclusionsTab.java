@@ -34,7 +34,7 @@ public class ExclusionsTab extends JPanel {
     /**
      * A {@link DefaultListModel<String>} containing all exclusions made in the exclusions tab of the GUI.
      */
-    private DefaultListModel<String> exclusions;
+    private final DefaultListModel<String> exclusions;
 
     public ExclusionsTab() {
         GridBagLayout gbl_this = new GridBagLayout();
